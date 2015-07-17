@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Who Says?</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <link href='http://fonts.googleapis.com/css?family=Karla:400,700' rel='stylesheet' type='text/css'>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; font-family:"Karla"; }
+      body { font: 13px Helvetica, Arial; background:#000; }
+      form {}
+      form input { border: 0; background: transparent; padding: 10px;}
+      form button { width:100%; left:0; right:0; position: absolute; bottom:-60px; background: transparent; border: none; padding: 10px; color:#fff; text-align: center; font-size:24px;}
+      #messages { list-style-type: none; margin: 20px 0 0 20px; padding: 0; }
+
+      li{background:#fff; border-radius:8px; width:200px; height:260px; margin:0 20px 20px 0; float:left; padding:10px; font-size:18px; font-weight: bold; color:#fff;}
+      li.show{color:#000;}
+      .clear{position: fixed; bottom:10px; right:10px; left:50%; text-align: center; color:#fff; text-decoration: none; font-size: 24px; opacity: 0.4}
+      .reveal{position: fixed; bottom:10px; right:50%; left:10px; text-align: center; color:#fff; text-decoration: none; font-size: 24px; }
+    </style>
+  </head>
+  <body>
+    
+    <ul id="messages"></ul>
+    
+    <a href="#reveal" class="reveal">REVEAL</a>
+    <a href="#clear" class="clear">CLEAR</a>
+  </body>
+
+  <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+  <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+  <script>
+  $.fn.randomize=function(a){(a?this.find(a):this).parent().each(function(){$(this).children(a).sort(function(){return Math.random()-0.5}).detach().appendTo(this)});return this};
+
+    var socket = io();
+    socket.on('chat message', function(msg){
+      $('#messages').append($('<li>').text(msg));
+    });
+
+    $( ".reveal" ).click(function() {
+    $( "#messages li" ).randomize().css("opacity",1).addClass("show");
+    return false;
+    });
+
+    $( ".clear" ).click(function() {
+    socket.emit('clear');
+    $('#messages li').slideUp("fast", function() { $('#ur_id').remove();});
+    return false;
+    });
+
+    $( document ).on( 'click', 'li', function () {
+       $(this).css("opacity",0.4);
+    });
+
+  </script>
+</html>

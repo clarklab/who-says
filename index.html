@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Who Says?</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <link href='http://fonts.googleapis.com/css?family=Karla:400,700' rel='stylesheet' type='text/css'>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; font-family:"Karla";}
+      body { font: 13px Helvetica, Arial; background:#000; }
+      form {}
+      input:focus { outline: none; }
+      form input { border: 0; background: transparent; padding: 10px; width:100%; position: absolute; top:0; left:0; right:0; text-align: top; font-size:22px;}
+      form button { width:100%; left:0; right:0; position: absolute; bottom:-60px; background: transparent; border: none; padding: 10px; color:#fff; text-align: center; font-size:22px; font-weight: bold;}
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+
+      .card{background:#fff; border-radius:8px; position: absolute; right:30px; left:30px; bottom:130px; top:40px;}
+    </style>
+  </head>
+  <body>
+    <div class="card">
+    <form action="">
+      <input id="m" placeholder="Type your answer here..." />
+      <button>DONE</button>
+    </form>
+    </div>
+    <ul id="messages"></ul>
+    
+  </body>
+  <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+  var socket = io();
+  $('form').submit(function(){
+    socket.emit('chat message', $('#m').val());
+    $('#m').val('');
+    $('.card').css("opacity",0.4);
+    return false;
+  });
+  $('.card').click(function(){
+    $('#m').focus();
+});
+  socket.on('clear', function(msg){
+      $('.card').css("opacity", 1);
+    });
+</script>
+</html>
