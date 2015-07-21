@@ -2,33 +2,43 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+// the player view
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
+// the dealer view
 app.get('/middle', function(req, res){
   res.sendFile(__dirname + '/index-middle.html');
 });
 
+
+// track the number of players connected to the game
+var players = 0;
 io.on('connection', function(socket){
-  console.log('a user connected');
+  ++players;
+  io.emit('count', players);
   socket.on('disconnect', function(){
-    console.log('user disconnected');
+    --players;
+    io.emit('count', players);
   });
 });
 
+// track when an answer card is played
 io.on('connection', function(socket){
-  socket.on('chat message', function(msg){
-    io.emit('chat message', msg);
+  socket.on('answer', function(msg){
+    io.emit('answer', msg);
   });
 });
 
+// track when a new question is dealt
 io.on('connection', function(socket){
-  socket.on('clear', function(){
-    io.emit('clear');
+  socket.on('deal', function(msg){
+    io.emit('deal', msg);
   });
 });
 
+// shhhh, just listen
 http.listen(3000, function(){
   console.log('listening on *:3000');
 });

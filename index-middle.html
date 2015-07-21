@@ -2,57 +2,126 @@
 <html>
   <head>
     <title>Who Says?</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="mobile-web-app-capable" content="yes">
-    <link rel="icon" href="icon.png">
-    <link rel="apple-touch-icon" href="icon.png">
+
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <meta name='mobile-web-app-capable' content='yes'>
+    <link rel='icon' href='https://cldup.com/06jMMZXaZM.png'>
+    <link rel='apple-touch-icon' href='https://cldup.com/06jMMZXaZM.png'>
+
     <link href='http://fonts.googleapis.com/css?family=Karla:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.indigo-pink.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flickity/1.1.0/flickity.min.css" type="text/css" />
+
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flickity/1.1.0/flickity.pkgd.min.js"></script>
+    
     <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; font-family:"Karla"; }
-      body { font: 13px Helvetica, Arial; background:#000; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html,body{height:100vh; overflow:hidden; font-family:"Karla" !important;}
+      body { font: 13px Helvetica, Arial; background: #000; text-align: center; }
+      .blink{background:#000 url(https://cldup.com/R9ZSU8OjKZ.gif) no-repeat 50% 90%; background-size: 150px auto;}
       form {}
       form input { border: 0; background: transparent; padding: 10px;}
       form button { width:100%; left:0; right:0; position: absolute; bottom:-60px; background: transparent; border: none; padding: 10px; color:#fff; text-align: center; font-size:24px;}
-      #messages { list-style-type: none; margin: 20px 0 0 20px; padding: 0; }
+      #cards {list-style-type: none; margin: 40px 0 0 20px; padding: 0; text-align: center; }
 
-      li{background:#fff; border-radius:8px; width:200px; height:260px; margin:0 20px 20px 0; float:left; padding:10px; font-size:18px; font-weight: bold; color:#fff;}
-      li.show{color:#000;}
-      .clear{position: fixed; bottom:10px; right:10px; left:50%; text-align: center; color:#fff; text-decoration: none; font-size: 24px; opacity: 0.4}
-      .reveal{position: fixed; bottom:10px; right:50%; left:10px; text-align: center; color:#fff; text-decoration: none; font-size: 24px; }
+      .question{color:#fff; font-size:34px; font-weight: bold; max-width:75%; margin:0 auto; display: inline-block; text-align: left; margin-top:80px;}
+
+      li{position:relative; width:140px; height:180px; margin:0 20px 20px 0; display:inline-block; padding:10px;}
+      li:before{content:" "; position: absolute; top:0; left:0; right:0; bottom:0; border:6px dashed #555;}
+      li.played:after{background:#fff; position: absolute; top:0; left:0; right:0; bottom:0; content:" "; border-radius:8px;}
+
+      #reveal{color:#666; padding:6px 18px; height:48px; font-size:24px; position: fixed; top:10px; left:28%;}
+      #deal{color:#666; padding:6px 18px; height:48px; font-size:24px; position: fixed; top:10px; right:28%;}
+      #deal.high, #reveal.high{color:#fff;}
+
+      .main-gallery{display:none; outline:none; margin-top:60px; width:100%;}
+      .gallery-cell {width: 65%; height: 80vh; margin-right: 70px; background: #fff; border-radius:10px; counter-increment: gallery-cell; font-size: 64px; font-weight: bold; padding:60px; text-align: left;}
+
+      .blank{display: inline-block; border-bottom:3px solid #fff; color:#000;}
     </style>
   </head>
-  <body>
+
+  <body class="blink">
+
+    <div class="question">
+    </div>
     
-    <ul id="messages"></ul>
-    
-    <a href="#reveal" class="reveal">REVEAL</a>
-    <a href="#clear" class="clear">CLEAR</a>
+    <ul id="cards"></ul>
+
+    <button id="reveal" class="mdl-button mdl-js-button mdl-js-ripple-effect">REVEAL</button>
+    <button id="deal" class="mdl-button mdl-js-button mdl-js-ripple-effect high">DEAL</button>
+
+    <div class="main-gallery">
+    </div>
+
   </body>
 
-  <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-  <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
   <script>
+
+  // function to shuffle cards before reveal
   $.fn.randomize=function(a){(a?this.find(a):this).parent().each(function(){$(this).children(a).sort(function(){return Math.random()-0.5}).detach().appendTo(this)});return this};
 
-    var socket = io();
-    socket.on('chat message', function(msg){
-      $('#messages').append($('<li>').text(msg));
-    });
+  // function to shuffle questions before deal
+  function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex ;
+  while (0 !== currentIndex) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }return array;}
 
-    $( ".reveal" ).click(function() {
-    $( "#messages li" ).randomize().css("opacity",1).addClass("show");
+  // multiply by N players connected
+  String.prototype.times = function(n) {
+    return Array.prototype.join.call({length: n+1}, this);
+  };
+
+  // start the socket
+  var socket = io();
+
+  // when a player connects or disconnects
+  socket.on('count', function(players){
+    $('#cards').empty().append('<li> </li>'.times(players-1));
+  });
+
+  // when a player submits an answer
+  socket.on('answer', function(msg){
+    $('#reveal').addClass("high");
+    $('#deal').removeClass("high");
+    $('#cards li:not(.played)').first().addClass("played");
+    $('.main-gallery').append($('<div class="gallery-cell">').text(msg));
+    $('body').removeClass('blink');
+  });
+
+  // when the dealer clicks the reveal button
+  $( "#reveal" ).click(function() {
+    $(this).removeClass("high");
+    $("#cards").hide();
+    $( ".main-gallery div" ).randomize();
+    $(".main-gallery").show().flickity({wrapAround: true, prevNextButtons: false, pageDots: false});
     return false;
-    });
+  });
 
-    $( ".clear" ).click(function() {
-    socket.emit('clear');
-    $('#messages li').slideUp("fast", function() { $('#ur_id').remove();});
+  // when the player clicks the deal button
+  $( "#deal" ).click(function() {
+    $(this).removeClass("high");
+    shuffle(cards);
+    socket.emit('deal', cards[0]);
+    $('#cards').show();
+    $('#cards li').removeClass('played');
+    $(".main-gallery").css("display", "none").flickity('destroy').empty();
+    $('.question').empty().append(cards[0]);
+    $('body').addClass('blink');
     return false;
-    });
+  });
 
-    $( document ).on( 'click', 'li', function () {
-       $(this).css("opacity",0.4);
-    });
+  // array of CaH black question cards
+  var cards = ["TSA guidelines now prohibit <span class='blank'>__________</span> on airplanes.", "It's a pity that kids these days are all getting involved with <span class='blank'>__________</span>.", "In 1,000 years, when paper money is but a distant memory, <span class='blank'>__________</span> will be our currency.", "Major League Baseball has banned <span class='blank'>__________</span> for giving players an unfair advantage.", "What is Batman's guilty pleasure?", "Next from J.K. Rowling: Harry Potter and the Chamber of <span class='blank'>__________</span>.", "I'm sorry, Professor, but I couldn't complete my homework because of <span class='blank'>__________</span>.", "What did I bring back from Mexico?", "<span class='blank'>__________</span>? There's an app for that.", "<span class='blank'>__________</span>. Betcha can't have just one!", "What's my anti-drug?", "While the United States raced the Soviet Union to the moon, the Mexican government funneled millions of pesos into research on <span class='blank'>__________</span>.", "In the new Disney Channel Original Movie, Hannah Montana struggles with <span class='blank'>__________</span> for the first time. ", "What's my secret power?", "What's the new fad diet?", "What did Vin Diesel eat for dinner?", "When Pharaoh remained unmoved, Moses called down a Plague of <span class='blank'>__________</span>.", "How am I maintaining my relationship status?", "What's the crustiest?", "In L.A. County Jail, word is you can trade 200 cigarettes for <span class='blank'>__________</span>.", "After the earthquake, Sean Penn brought <span class='blank'>__________</span> to the people of Haiti.", "Instead of coal, Santa now gives the bad children <span class='blank'>__________</span>.", "Life for American Indians was forever changed when the White Man introduced them to <span class='blank'>__________</span>.", "What's Teach for America using to inspire inner city students to succeed?", "Maybe she's born with it. Maybe it's <span class='blank'>__________</span>.", "In Michael Jackson's final moments, he thought about <span class='blank'>__________</span>.", "White people like <span class='blank'>__________</span>.", "Why do I hurt all over?", "A romantic, candlelit dinner would be incomplete without <span class='blank'>__________</span>.", "What will I bring back in time to convince people that I am a powerful wizard?", "BILLY MAYS HERE FOR <span class='blank'>__________</span>.", "The class field trip was completely ruined by <span class='blank'>__________</span>.", "What's a girl's best friend?", "Dear Abby, I'm having some trouble with <span class='blank'>__________</span> and would like your advice.", "When I am President of the United States, I will create the Department of <span class='blank'>__________</span>.", "What are my parents hiding from me?", "What never fails to liven up the party?", "What gets better with age?", "<span class='blank'>__________</span>: Good to the last drop.", "I got 99 problems but <span class='blank'>__________</span> ain't one.", "<span class='blank'>__________</span>. It's a trap!", "MTV's new reality show features eight washed-up celebrities living with <span class='blank'>__________</span>.", "What would grandma find disturbing, yet oddly charming?", "What's the most emo?", "During sex, I like to think about <span class='blank'>__________</span>.", "What ended my last relationship?", "What's that sound?", "<span class='blank'>__________</span>. That's how I want to die.", "Why am I sticky?", "What's the next Happy Meal toy?", "What's there a ton of in heaven?", "I do not know with what weapons World War III will be fought, but World War IV will be fought with <span class='blank'>__________</span>.", "What will always get you laid?", "<span class='blank'>__________</span>: Kid-tested, mother-approved.", "Why can't I sleep at night?", "What's that smell?", "What helps Obama unwind?", "This is the way the world ends / This is the way the world ends / Not with a bang but with <span class='blank'>__________</span>.", "Coming to Broadway this season, <span class='blank'>__________</span>: The Musical.", "Anthropologists have recently discovered a primitive tribe that worships <span class='blank'>__________</span>.", "But before I kill you, Mr. Bond, I must show you <span class='blank'>__________</span>.", "Studies show that lab rats navigate mazes 50% faster after being exposed to <span class='blank'>__________</span>.", "Next on ESPN2: The World Series of <span class='blank'>__________</span>.", "When I am a billionaire, I shall erect a 50-foot statue to commemorate <span class='blank'>__________</span>.", "In an attempt to reach a wider audience, the Smithsonian Museum of Natural History has opened an interactive exhibit on <span class='blank'>__________</span>.", "War! What is it good for?", "What gives me uncontrollable gas?", "What do old people smell like?", "What am I giving up for Lent?", "Alternative medicine is now embracing the curative powers of <span class='blank'>__________</span>.", "What did the US airdrop to the children of Afghanistan?", "What does Dick Cheney prefer?", "During Picasso's often-overlooked Brown Period, he produced hundreds of paintings of <span class='blank'>__________</span>.", "What don't you want to find in your Chinese food?", "I drink to forget <span class='blank'>__________</span>.", "<span class='blank'>__________</span>. High five, bro.", "He who controls <span class='blank'>__________</span> controls the world.", "The CIA now interrogates enemy agents by repeatedly subjecting them to <span class='blank'>__________</span>.", "In Rome, there are whisperings that the Vatican has a secret room devoted to <span class='blank'>__________</span>.", "Science will never explain the origin of <span class='blank'>__________</span>.", "When all else fails, I can always masturbate to <span class='blank'>__________</span>.", "I learned the hard way that you can't cheer up a grieving friend with <span class='blank'>__________</span>.", "In its new tourism campaign, Detroit proudly proclaims that it has finally eliminated <span class='blank'>__________</span>.", "The socialist governments of Scandinavia have declared that access to <span class='blank'>__________</span> is a basic human right.", "In his new self-produced album, Kanye West raps over the sounds of <span class='blank'>__________</span>.", "What's the gift that keeps on giving?", "This season on Man vs. Wild, Bear Grylls must survive in the depths of the Amazon with only <span class='blank'>__________</span> and his wits. ", "When I pooped, what came out of my butt?", "In the distant future, historians will agree that <span class='blank'>__________</span> marked the beginning of America's decline.", "What has been making life difficult at the nudist colony?", "And I would have gotten away with it, too, if it hadn't been for <span class='blank'>__________</span>.", "What brought the orgy to a grinding halt?"];
 
   </script>
 </html>
