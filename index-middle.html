@@ -5,47 +5,23 @@
 
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <meta name='mobile-web-app-capable' content='yes'>
-    <link rel='icon' href='https://cldup.com/06jMMZXaZM.png'>
-    <link rel='apple-touch-icon' href='https://cldup.com/06jMMZXaZM.png'>
+    <link rel='icon' href='/public/icon.png'>
+    <link rel='apple-touch-icon' href='/public/icon.png'>
 
     <link href='http://fonts.googleapis.com/css?family=Karla:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.indigo-pink.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flickity/1.1.0/flickity.min.css" type="text/css" />
+    <link rel='stylesheet' href='/public/style.css'>
 
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flickity/1.1.0/flickity.pkgd.min.js"></script>
-    
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      html,body{height:100vh; overflow:hidden; font-family:"Karla" !important;}
-      body { font: 13px Helvetica, Arial; background: #000; text-align: center; }
-      .blink{background:#000 url(https://cldup.com/R9ZSU8OjKZ.gif) no-repeat 50% 90%; background-size: 150px auto;}
-      form {}
-      form input { border: 0; background: transparent; padding: 10px;}
-      form button { width:100%; left:0; right:0; position: absolute; bottom:-60px; background: transparent; border: none; padding: 10px; color:#fff; text-align: center; font-size:24px;}
-      #cards {list-style-type: none; margin: 40px 0 0 20px; padding: 0; text-align: center; }
 
-      .question{color:#fff; font-size:34px; font-weight: bold; max-width:75%; margin:0 auto; display: inline-block; text-align: left; margin-top:80px;}
-
-      li{position:relative; width:140px; height:180px; margin:0 20px 20px 0; display:inline-block; padding:10px;}
-      li:before{content:" "; position: absolute; top:0; left:0; right:0; bottom:0; border:6px dashed #555;}
-      li.played:after{background:#fff; position: absolute; top:0; left:0; right:0; bottom:0; content:" "; border-radius:8px;}
-
-      #reveal{color:#666; padding:6px 18px; height:48px; font-size:24px; position: fixed; top:10px; left:28%;}
-      #deal{color:#666; padding:6px 18px; height:48px; font-size:24px; position: fixed; top:10px; right:28%;}
-      #deal.high, #reveal.high{color:#fff;}
-
-      .main-gallery{display:none; outline:none; margin-top:60px; width:100%;}
-      .gallery-cell {width: 65%; height: 80vh; margin-right: 70px; background: #fff; border-radius:10px; counter-increment: gallery-cell; font-size: 64px; font-weight: bold; padding:60px; text-align: left;}
-
-      .blank{display: inline-block; border-bottom:3px solid #fff; color:#000;}
-    </style>
   </head>
 
-  <body class="blink">
+  <body class="dealer blink">
 
     <div class="question">
     </div>
@@ -55,7 +31,7 @@
     <button id="reveal" class="mdl-button mdl-js-button mdl-js-ripple-effect">REVEAL</button>
     <button id="deal" class="mdl-button mdl-js-button mdl-js-ripple-effect high">DEAL</button>
 
-    <div class="main-gallery">
+    <div class="chooser">
     </div>
 
   </body>
@@ -94,7 +70,7 @@
     $('#reveal').addClass("high");
     $('#deal').removeClass("high");
     $('#cards li:not(.played)').first().addClass("played");
-    $('.main-gallery').append($('<div class="gallery-cell">').text(msg));
+    $('.chooser').append($('<div class="card">').text(msg));
     $('body').removeClass('blink');
   });
 
@@ -102,8 +78,8 @@
   $( "#reveal" ).click(function() {
     $(this).removeClass("high");
     $("#cards").hide();
-    $( ".main-gallery div" ).randomize();
-    $(".main-gallery").show().flickity({wrapAround: true, prevNextButtons: false, pageDots: false});
+    $( ".chooser div" ).randomize();
+    $(".chooser").show().flickity({wrapAround: true, prevNextButtons: false, pageDots: false});
     return false;
   });
 
@@ -114,7 +90,7 @@
     socket.emit('deal', cards[0]);
     $('#cards').show();
     $('#cards li').removeClass('played');
-    $(".main-gallery").css("display", "none").flickity('destroy').empty();
+    $(".chooser").css("display", "none").flickity('destroy').empty();
     $('.question').empty().append(cards[0]);
     $('body').addClass('blink');
     return false;

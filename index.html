@@ -5,34 +5,19 @@
 
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <meta name='mobile-web-app-capable' content='yes'>
-    <link rel='icon' href='https://cldup.com/06jMMZXaZM.png'>
-    <link rel='apple-touch-icon' href='https://cldup.com/06jMMZXaZM.png'>
+    <link rel='icon' href='/public/icon.png'>
+    <link rel='apple-touch-icon' href='/public/icon.png'>
 
     <link href='http://fonts.googleapis.com/css?family=Karla:400,700' rel='stylesheet' type='text/css'>
     <link rel='stylesheet' href='https://storage.googleapis.com/code.getmdl.io/1.0.0/material.indigo-pink.min.css'>
     <link rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons'>
+    <link rel='stylesheet' href='/public/style.css'>
 
     <script src='https://cdn.socket.io/socket.io-1.2.0.js'></script>
     <script src='http://code.jquery.com/jquery-1.11.1.js'></script>
     <script src='https://storage.googleapis.com/code.getmdl.io/1.0.0/material.min.js'></script>
-    
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box;}
-      html,body{min-height:100%; overflow-x: hidden; font-family:"Karla" !important; }
-      body { font: 13px Helvetica, Arial; background:#000; }
-
-      textarea:focus, button:focus { outline: none; }
-      form textarea { border: 0; background: transparent; padding: 25px; width:100%; position: absolute; top:0; left:0; right:0; bottom:-10px; text-align: top; font-size:31px; font-weight: bold; resize: none;}
-      #submit {position: absolute; top:28px; right:-28px; background:#007FFF; margin-right:-50%; transition:.3s ease margin;}
-
-      .question{color:#fff; font-size:24px; font-weight: bold; padding:6% 15% 0;}
-      .card{background:#fff; position: relative; border-radius:8px; margin:7% auto 0; width:80%; padding-top:105%; transition:.3s ease margin;}
-      .card.played{margin-top:-90%;}
-
-      .blank{display: inline-block; border-bottom:3px solid #fff; color:#000;}
-    </style>
   </head>
-  <body>
+  <body class="player">
 
   <div class="question">
   </div>

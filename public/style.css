@@ -1,0 +1,30 @@
+* { margin: 0; padding: 0; box-sizing: border-box;}
+html,body{min-height:100%vh; overflow-x: hidden; font-family:"Karla" !important; }
+body { font: 13px Helvetica, Arial; background:#000; text-align: center; }
+
+textarea:focus, button:focus { outline: none; }
+
+.player{text-align: left;}
+.player .question{color:#fff; font-size:24px; font-weight: bold; padding:6% 15% 0;}
+
+.player .card textarea { border: 0; background: transparent; padding: 25px; width:100%; position: absolute; top:0; left:0; right:0; bottom:-10px; text-align: top; font-size:31px; font-weight: bold; resize: none;}
+.player .card #submit {position: absolute; top:28px; right:-28px; background:#007FFF; margin-right:-50%; transition:.3s ease margin;}
+.player .card{background:#fff; position: relative; border-radius:8px; margin:7% auto 0; width:80%; padding-top:105%; transition:.3s ease margin;}
+.player .card.played{margin-top:-90%;}
+
+.dealer .question{color:#fff; font-size:34px; font-weight: bold; max-width:75%; margin:0 auto; display: inline-block; text-align: left; margin-top:80px;}
+
+.dealer #cards {list-style-type: none; margin: 40px 0 0 20px; padding: 0; text-align: center; }
+.dealer #cards li{position:relative; width:140px; height:180px; margin:0 20px 20px 0; display:inline-block; padding:10px;}
+.dealer #cards li:before{content:" "; position: absolute; top:0; left:0; right:0; bottom:0; border:6px dashed #555;}
+.dealer #cards li.played:after{background:#fff; position: absolute; top:0; left:0; right:0; bottom:0; content:" "; border-radius:8px;}
+
+#reveal{color:#666; padding:6px 18px; height:48px; font-size:24px; position: fixed; top:10px; left:28%;}
+#deal{color:#666; padding:6px 18px; height:48px; font-size:24px; position: fixed; top:10px; right:28%;}
+#deal.high, #reveal.high{color:#fff;}
+
+.chooser{display:none; outline:none; margin-top:60px; width:100%;}
+.chooser .card {width: 65%; height: 80vh; margin-right: 70px; background: #fff; border-radius:10px; counter-increment: gallery-cell; font-size: 64px; font-weight: bold; padding:60px; text-align: left;}
+
+.blink{background:#000 url(https://cldup.com/R9ZSU8OjKZ.gif) no-repeat 50% 90%; background-size: 150px auto;}
+.blank{display: inline-block; border-bottom:3px solid #fff; color:#000;}

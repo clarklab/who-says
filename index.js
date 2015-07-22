@@ -1,6 +1,9 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+
+app.use("/public", express.static(__dirname + '/public'));
 
 // the player view
 app.get('/', function(req, res){
