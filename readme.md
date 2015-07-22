@@ -1,6 +1,8 @@
 ## Who Says?
 a card game with no cards
 
+![Who Says? in action](https://cldup.com/9dEPH5fCfY.gif)
+
 ### How to play
 players answer, dealer guesses
 
