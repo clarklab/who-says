@@ -3,6 +3,13 @@ a card game with no cards
 
 ![Who Says? in action](https://cldup.com/9dEPH5fCfY.gif)
 
+### Requirments
+*Who Says?* isn't an online game you play over the internet. It's meant to be enjoyed around an IRL table with IRL friends. You'll need:
+
+- a table (or other IRL space)
+- some friends
+- a device for each player
+
 ### How to play
 players answer, dealer guesses
 
