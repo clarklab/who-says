@@ -1,4 +1,4 @@
-## who-says
+## Who Says?
 a card game with no cards
 
 ### How to play
@@ -12,7 +12,7 @@ Clone these files, navigate to the directory, run
 ### Credits
 *Who Says?* is a mash of things from a bunch of talented folks. Keeping the ship afloat:
 
-Questions from [Cards Against Humanity](http://cardsagainsthumanity.com)
-Realtime push by [socket.io](http://socket.io)
-Style help from Google's [Material Design Lite](http://getmdl.io)
-Swipey card thing made with [Flickity](http://flickity.metafizzy.co/)
+- Questions from [Cards Against Humanity](http://cardsagainsthumanity.com)
+- Realtime push by [socket.io](http://socket.io)
+- Style help from Google's [Material Design Lite](http://getmdl.io)
+- Swipey card thing made with [Flickity](http://flickity.metafizzy.co/)
