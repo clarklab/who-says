@@ -1,8 +1,8 @@
 # who-says
 a card game with no cards
 
-# how to play
+## how to play
 players answer, dealer guesses
 
-# how to build
+## how to build
 coming soon
