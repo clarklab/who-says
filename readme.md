@@ -16,8 +16,9 @@ players answer, dealer guesses
 ### How to build
 Clone these files, navigate to the directory, run
 
-`npm install
-node index`
+`npm install`
+
+`node index`
 
 ### Credits
 *Who Says?* is a mash of things from a bunch of talented folks. Keeping the ship afloat:
